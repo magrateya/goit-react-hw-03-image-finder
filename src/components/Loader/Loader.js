@@ -8,7 +8,7 @@ export default class LoaderRings extends React.Component {
     return (
       <Loader
         className={s.loader}
-        type="Rings"
+        type="Bars"
         color="#00BFFF"
         height={100}
         width={100}
