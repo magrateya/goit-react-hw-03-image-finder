@@ -5,6 +5,7 @@ import Searchbar from './components/Searchbar/Searchbar';
 import ImageGallery from './components/ImageGallery/ImageGallery';
 import Button from './components/Button/Button';
 import LoaderRings from './components/Loader/Loader';
+import Modal from './components/Modal/Modal';
 
 // axios.defaults.headers.common['Authorization'] =
 //   'Bearer 18994558-99c21eb2af8503bc6443a1f41';
@@ -16,6 +17,7 @@ export default class ImagesView extends Component {
     searchQuery: '',
     isLoading: false,
     error: null,
+    largeImageURL: '',
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -67,18 +69,32 @@ export default class ImagesView extends Component {
     });
   };
 
+  openModal = url => {
+    this.setState({ largeImageURL: url });
+  };
+
+  closeModal = () => {
+    this.setState({ largeImageURL: '' });
+  };
+
   render() {
-    const { hits, isLoading, error } = this.state;
+    const { hits, isLoading, error, largeImageURL } = this.state;
     const shouldRenderLoadMoreButton = hits.length > 0 && !isLoading;
 
     return (
       <>
+        {largeImageURL && (
+          <Modal onClose={this.closeModal}>
+            <img src={largeImageURL} alt={largeImageURL} />
+          </Modal>
+        )}
         <Searchbar onSubmit={this.onChangeQuery} />
         {error && <h1>Упс, виникла помилка - {error.message}</h1>}
 
-        {hits.length > 0 && <ImageGallery hits={hits} />}
+        {hits.length > 0 && (
+          <ImageGallery hits={hits} onImgClick={this.openModal} />
+        )}
         {isLoading && <LoaderRings />}
-
         {shouldRenderLoadMoreButton && <Button onClick={this.fetchImages} />}
       </>
     );
